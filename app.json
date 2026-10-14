@@ -12,13 +12,38 @@
       "resizeMode": "cover",
       "backgroundColor": "#241B16"
     },
-    "assetBundlePatterns": ["assets/**/*"],
-    "plugins": ["expo-router", "expo-audio"],
+    "assetBundlePatterns": [
+      "assets/**/*"
+    ],
+    "plugins": [
+      "expo-router",
+      "expo-audio"
+    ],
     "android": {
       "package": "com.soloverse.heritage",
-      "adaptiveIcon": { "foregroundImage": "./assets/icons/guardian.png", "backgroundColor": "#241B16" }
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/icons/guardian.png",
+        "backgroundColor": "#241B16"
+      },
+      "permissions": [
+        "android.permission.RECORD_AUDIO",
+        "android.permission.MODIFY_AUDIO_SETTINGS"
+      ]
     },
-    "ios": { "bundleIdentifier": "com.soloverse.heritage", "supportsTablet": true },
-    "web": { "bundler": "metro", "output": "single" }
+    "ios": {
+      "bundleIdentifier": "com.soloverse.heritage",
+      "supportsTablet": true
+    },
+    "web": {
+      "bundler": "metro",
+      "output": "single"
+    },
+    "extra": {
+      "router": {},
+      "eas": {
+        "projectId": "fcc66d2e-37a6-4aed-81f7-49437c18308e"
+      }
+    },
+    "owner": "nextylabs"
   }
 }
