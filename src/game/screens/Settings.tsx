@@ -5,6 +5,7 @@ import { useGame } from "../state";
 import { Btn, Panel, Txt } from "../ui";
 import { C } from "../theme";
 import { aiMessage, testAiKey, useAiStatus } from "../../lib/ai";
+import { L } from "../../lib/i18n";
 
 export default function Settings({
   onBack,
@@ -13,21 +14,21 @@ export default function Settings({
   onBack: () => void;
   onReset: () => void;
 }) {
-  const { soundOn, toggleSound } = useGame();
+  const { soundOn, toggleSound, lang, setLang } = useGame();
   const ins = useSafeAreaInsets();
   const ai = useAiStatus();
   const [msg, setMsg] = useState("");
   const [busy, setBusy] = useState(false);
   const [ok, setOk] = useState<boolean | null>(null);
   const [confirm, setConfirm] = useState(false);
-
+  const [diag, setDiag] = useState(false);
   const test = async () => {
     setBusy(true);
     setMsg("");
     setOk(null);
     try {
       const r = await testAiKey();
-      setMsg(r || "Terhubung!");
+      setMsg(r || L("Terhubung!", "Connected!"));
       setOk(true);
     } catch (e) {
       setMsg(aiMessage(e));
@@ -35,7 +36,6 @@ export default function Settings({
     }
     setBusy(false);
   };
-
   return (
     <View style={{ flex: 1, backgroundColor: C.bg, paddingTop: ins.top + 8 }}>
       <View
@@ -49,12 +49,12 @@ export default function Settings({
         <Btn
           small
           kind="dark"
-          label="← Kembali"
+          label={L("← Kembali", "← Back")}
           onPress={onBack}
           testID="settings-back"
         />
         <Txt size={20} bold color={C.gold} center style={{ flex: 1 }}>
-          Pengaturan
+          {L("Pengaturan", "Settings")}
         </Txt>
         <View style={{ width: 90 }} />
       </View>
@@ -71,61 +71,67 @@ export default function Settings({
       >
         <Panel style={{ gap: 8 }}>
           <Txt bold size={16} color={C.gold}>
-            Gemini AI
+            {L("Bahasa", "Language")}
           </Txt>
-          <Txt size={12} color={ai.available ? C.green : C.muted}>
-            {ai.available
-              ? "● Kunci terbaca dari .env"
-              : "○ Kunci belum terbaca"}
+          <View style={{ flexDirection: "row", gap: 10 }}>
+            <Btn
+              label="Indonesia"
+              kind={lang === "id" ? "gold" : "dark"}
+              onPress={() => setLang("id")}
+              style={{ flex: 1 }}
+              testID="lang-id"
+            />
+            <Btn
+              label="English"
+              kind={lang === "en" ? "gold" : "dark"}
+              onPress={() => setLang("en")}
+              style={{ flex: 1 }}
+              testID="lang-en"
+            />
+          </View>
+          <Txt size={12} color={C.muted}>
+            {L(
+              "Isi game tetap bernuansa bahasa Jawa. Pilihan ini untuk terjemahan dan petunjuk.",
+              "The game content stays Javanese. This option is for translations and instructions.",
+            )}
           </Txt>
-          {!ai.available ? (
-            <Txt size={13} color={C.muted}>
-              Isi EXPO_PUBLIC_GEMINI_API_KEY di file .env, lalu jalankan ulang
-              dengan npx expo start -c.
-            </Txt>
-          ) : null}
-          <Btn
-            label={busy ? "Menguji…" : "Uji Koneksi"}
-            kind="blue"
-            disabled={busy || !ai.available}
-            onPress={test}
-            testID="test-ai"
-          />
-          {msg ? (
-            <Txt size={13} color={ok === false ? C.red : C.green}>
-              {msg}
-            </Txt>
-          ) : null}
         </Panel>
-
         <Panel style={{ gap: 8 }}>
           <Txt bold size={16} color={C.gold}>
-            Suara
+            {L("Suara", "Sound")}
           </Txt>
           <Btn
-            label={soundOn ? "Suara: Hidup" : "Suara: Mati"}
+            label={
+              soundOn
+                ? L("Suara: Hidup", "Sound: On")
+                : L("Suara: Mati", "Sound: Off")
+            }
             kind={soundOn ? "green" : "dark"}
             onPress={toggleSound}
             testID="toggle-sound"
           />
         </Panel>
-
         <Panel style={{ gap: 8 }}>
           <Txt bold size={16} color={C.gold}>
-            Data
+            {L("Data", "Data")}
           </Txt>
           {confirm ? (
             <View style={{ gap: 8 }}>
-              <Txt size={13}>Semua progres dan profil akan dihapus. Yakin?</Txt>
+              <Txt size={13}>
+                {L(
+                  "Semua progres dan profil akan dihapus. Yakin?",
+                  "All progress and your profile will be deleted. Are you sure?",
+                )}
+              </Txt>
               <View style={{ flexDirection: "row", gap: 10 }}>
                 <Btn
-                  label="Batal"
+                  label={L("Batal", "Cancel")}
                   kind="dark"
                   onPress={() => setConfirm(false)}
                   style={{ flex: 1 }}
                 />
                 <Btn
-                  label="Ya, hapus"
+                  label={L("Ya, hapus", "Yes, delete")}
                   kind="red"
                   onPress={onReset}
                   style={{ flex: 1 }}
@@ -134,11 +140,60 @@ export default function Settings({
             </View>
           ) : (
             <Btn
-              label="Hapus Progres"
+              label={L("Hapus Progres", "Delete Progress")}
               kind="red"
               onPress={() => setConfirm(true)}
             />
           )}
+        </Panel>
+        <Panel style={{ gap: 8 }}>
+          <Btn
+            small
+            kind="ghost"
+            label={
+              diag
+                ? L("▼ Diagnostik koneksi", "▼ Connection diagnostics")
+                : L("▶ Diagnostik koneksi", "▶ Connection diagnostics")
+            }
+            onPress={() => setDiag(!diag)}
+            testID="diag-toggle"
+          />
+          {diag ? (
+            <View style={{ gap: 8 }}>
+              <Txt size={12} color={ai.available ? C.green : C.muted}>
+                {ai.available
+                  ? L(
+                      "● Kunci API terbaca dari .env",
+                      "● API key read from .env",
+                    )
+                  : L("○ Kunci API belum terbaca", "○ API key not found")}
+              </Txt>
+              {!ai.available ? (
+                <Txt size={13} color={C.muted}>
+                  {L(
+                    "Isi EXPO_PUBLIC_GEMINI_API_KEY di file .env, lalu jalankan ulang dengan npx expo start -c.",
+                    "Set EXPO_PUBLIC_GEMINI_API_KEY in the .env file, then restart with npx expo start -c.",
+                  )}
+                </Txt>
+              ) : null}
+              <Btn
+                label={
+                  busy
+                    ? L("Menguji…", "Testing…")
+                    : L("Uji Koneksi", "Test Connection")
+                }
+                kind="blue"
+                disabled={busy || !ai.available}
+                onPress={test}
+                testID="test-ai"
+              />
+              {msg ? (
+                <Txt size={13} color={ok === false ? C.red : C.green}>
+                  {msg}
+                </Txt>
+              ) : null}
+            </View>
+          ) : null}
         </Panel>
       </ScrollView>
     </View>

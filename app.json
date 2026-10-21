@@ -6,23 +6,18 @@
     "version": "3.0.0",
     "orientation": "default",
     "userInterfaceStyle": "dark",
-    "icon": "./assets/icons/guardian.png",
+    "icon": "./assets/iconSoloVerse.png",
     "splash": {
-      "image": "./assets/art/pendhapa.png",
+      "image": "./assets/logoSoloVerse.png",
       "resizeMode": "cover",
       "backgroundColor": "#241B16"
     },
-    "assetBundlePatterns": [
-      "assets/**/*"
-    ],
-    "plugins": [
-      "expo-router",
-      "expo-audio"
-    ],
+    "assetBundlePatterns": ["assets/**/*"],
+    "plugins": ["expo-router", "expo-audio"],
     "android": {
       "package": "com.soloverse.heritage",
       "adaptiveIcon": {
-        "foregroundImage": "./assets/icons/guardian.png",
+        "foregroundImage": "./assets/iconSoloVerse.png",
         "backgroundColor": "#241B16"
       },
       "permissions": [
